@@ -116,9 +116,7 @@ def _parse_hosts(raw_hosts: Any) -> tuple[Host, ...]:
             role = HostRole(role_raw)
         except ValueError as exc:
             allowed = ", ".join(r.value for r in HostRole)
-            raise ConfigError(
-                f"'{ctx}.role' must be one of [{allowed}], got '{role_raw}'"
-            ) from exc
+            raise ConfigError(f"'{ctx}.role' must be one of [{allowed}], got '{role_raw}'") from exc
 
         parsed.append(Host(name=name, address=address, role=role))
 

@@ -5,7 +5,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-
 from scripts.config import ConfigError, load_config
 from scripts.models import HostRole, OutputFormat
 
