@@ -67,6 +67,7 @@ clean: ## Remove local caches and build artifacts
 report: ## Generate the lab report PDF from docs/lab-report.md
 	pandoc docs/lab-report.md \
 		--from markdown \
+		--resource-path=docs:assets \
 		--pdf-engine=xelatex \
 		--toc --toc-depth=3 \
 		--number-sections \

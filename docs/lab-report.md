@@ -8,7 +8,7 @@ lang: es
 \begin{titlepage}
 \centering
 
-\includegraphics[width=0.55\textwidth]{../assets/branding/banner-jalau.png}
+\includegraphics[width=0.55\textwidth]{assets/branding/banner-jalau.png}
 
 \vspace{2.5cm}
 
