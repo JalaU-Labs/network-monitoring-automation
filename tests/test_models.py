@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import FrozenInstanceError
 from datetime import UTC, datetime
 
 import pytest
@@ -22,7 +23,7 @@ def _make_result(*, success: bool, rtt_ms: float | None) -> ProbeResult:
 
 def test_host_is_immutable() -> None:
     host = Host(name="h", address="127.0.0.1", role=HostRole.LOCAL)
-    with pytest.raises(Exception):
+    with pytest.raises(FrozenInstanceError):
         host.name = "other"  # type: ignore[misc]
 
 
