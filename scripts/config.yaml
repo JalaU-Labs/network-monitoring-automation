@@ -1,0 +1,34 @@
+# ==============================================================================
+# Monitoring configuration - Activity 2
+# All durations are expressed in seconds unless noted otherwise.
+# ==============================================================================
+
+monitoring:
+  # Time between consecutive probe rounds.
+  interval_seconds: 5
+  # Total number of probe rounds per host.
+  iterations: 10
+  # Per-probe timeout before the host is considered unreachable.
+  timeout_seconds: 2
+
+# Hosts to monitor. `role` categorizes the destination and is used
+# for reporting and future filtering.
+hosts:
+  - name: target-alpha
+    address: 172.28.0.10
+    role: container
+  - name: target-beta
+    address: 172.28.0.11
+    role: container
+  - name: cloudflare-dns
+    address: 1.1.1.1
+    role: public
+
+output:
+  # Directory where consolidated reports are written (relative to repo root).
+  reports_dir: reports
+  # Enabled output formats. Supported: json, log, markdown.
+  formats:
+    - json
+    - log
+    - markdown
