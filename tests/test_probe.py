@@ -6,7 +6,6 @@ import subprocess
 from typing import Any
 
 import pytest
-
 from scripts.models import Host, HostRole
 from scripts.probe import parse_rtt_ms, probe_host
 
@@ -34,6 +33,7 @@ def _make_completed(
 # parse_rtt_ms
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.parametrize(
     ("stdout", "expected"),
     [
@@ -58,6 +58,7 @@ def test_parse_rtt_ms_returns_none_on_empty_stdout() -> None:
 # probe_host - success
 # ---------------------------------------------------------------------------
 
+
 def test_probe_host_success(mocker: Any, host: Host) -> None:
     stdout = "64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.123 ms"
     mocker.patch(
@@ -78,6 +79,7 @@ def test_probe_host_success(mocker: Any, host: Host) -> None:
 # ---------------------------------------------------------------------------
 # probe_host - failures
 # ---------------------------------------------------------------------------
+
 
 def test_probe_host_unreachable_host(mocker: Any, host: Host) -> None:
     mocker.patch(
