@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import pytest
-
 from scripts import __version__, network_monitor
 
 
