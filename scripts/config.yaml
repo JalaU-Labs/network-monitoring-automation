@@ -1,6 +1,12 @@
 # ==============================================================================
 # Monitoring configuration - Activity 2
 # All durations are expressed in seconds unless noted otherwise.
+#
+# Host addresses map to the Docker topology defined in docker-compose.yml:
+#   172.28.0.10  target-alpha   (netem: 50 ms delay, 5% loss)
+#   172.28.0.11  target-beta    (netem: 10 ms delay)
+#   172.28.0.2   iperf3-server  (Activity 1)
+#   1.1.1.1      public DNS     (external baseline)
 # ==============================================================================
 
 monitoring:
