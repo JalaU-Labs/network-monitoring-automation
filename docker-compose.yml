@@ -6,6 +6,9 @@
 name: netmon-lab
 
 services:
+  # ---------------------------------------------------------------------------
+  # Activity 1 - iperf3 server for throughput measurements.
+  # ---------------------------------------------------------------------------
   iperf3-server:
     build:
       context: ./docker/iperf3
@@ -14,12 +17,74 @@ services:
     container_name: netmon-iperf3
     hostname: iperf3-server
     networks:
-      - netmon
+      netmon:
+        ipv4_address: 172.28.0.2
     ports:
       - "5201:5201/tcp"
       - "5201:5201/udp"
     restart: unless-stopped
 
+  # ---------------------------------------------------------------------------
+  # Activity 2 - Target hosts.
+  # target-alpha simulates a degraded path: 50 ms delay + 5% packet loss.
+  # target-beta simulates a lightly loaded path: 10 ms delay, no loss.
+  # Both require NET_ADMIN to apply tc netem on eth0.
+  # ---------------------------------------------------------------------------
+  target-alpha:
+    build:
+      context: ./docker/target
+      dockerfile: Dockerfile
+    image: netmon-target:latest
+    container_name: netmon-target-alpha
+    hostname: target-alpha
+    cap_add:
+      - NET_ADMIN
+    command: >
+      sh -c "tc qdisc add dev eth0 root netem delay 50ms loss 5% && sleep infinity"
+    networks:
+      netmon:
+        ipv4_address: 172.28.0.10
+
+  target-beta:
+    build:
+      context: ./docker/target
+      dockerfile: Dockerfile
+    image: netmon-target:latest
+    container_name: netmon-target-beta
+    hostname: target-beta
+    cap_add:
+      - NET_ADMIN
+    command: >
+      sh -c "tc qdisc add dev eth0 root netem delay 10ms && sleep infinity"
+    networks:
+      netmon:
+        ipv4_address: 172.28.0.11
+
+  # ---------------------------------------------------------------------------
+  # Activity 2 - Monitor host. Runs the Python monitoring script.
+  # Scripts are mounted read-only for iterative development; reports are
+  # written to the host's ./reports directory.
+  # ---------------------------------------------------------------------------
+  monitor:
+    build:
+      context: .
+      dockerfile: docker/monitor/Dockerfile
+    image: netmon-monitor:latest
+    container_name: netmon-monitor
+    hostname: monitor
+    depends_on:
+      - target-alpha
+      - target-beta
+    volumes:
+      - ./scripts:/app/scripts:ro
+      - ./reports:/app/reports
+    networks:
+      netmon:
+        ipv4_address: 172.28.0.20
+
+# -----------------------------------------------------------------------------
+# Dedicated monitoring network with a fixed subnet for deterministic IPs.
+# -----------------------------------------------------------------------------
 networks:
   netmon:
     name: netmon-net
