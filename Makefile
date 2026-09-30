@@ -12,7 +12,7 @@ PYTHON      := $(UV) run python
 COMPOSE     := docker compose
 COMPOSE_FILE:= docker-compose.yml
 
-.PHONY: help setup lint format test test-cov run monitor \
+.PHONY: help setup report lint format test test-cov run monitor \
         docker-build docker-up docker-down docker-logs \
         docker-clean clean all
 
@@ -63,6 +63,19 @@ clean: ## Remove local caches and build artifacts
 	find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
 	find . -type d -name ".ruff_cache"  -exec rm -rf {} + 2>/dev/null || true
 	rm -rf htmlcov/ .coverage reports/*.json reports/*.log reports/*.md 2>/dev/null || true
+
+report: ## Generate the lab report PDF from docs/lab-report.md
+	pandoc docs/lab-report.md \
+		--from markdown \
+		--pdf-engine=xelatex \
+		--toc --toc-depth=3 \
+		--number-sections \
+		-V geometry:margin=2.5cm \
+		-V fontsize=11pt \
+		-V colorlinks=true \
+		-V linkcolor=blue \
+		-V urlcolor=blue \
+		-o docs/lab-report.pdf
 
 all: lint test ## Run lint and tests
 
