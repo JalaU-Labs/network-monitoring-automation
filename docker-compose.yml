@@ -1,0 +1,29 @@
+# ==============================================================================
+# docker-compose.yml - Week 05 Lab
+# Activities 1 and 2 (iperf3 throughput tests + monitoring/automation).
+# ==============================================================================
+
+name: netmon-lab
+
+services:
+  iperf3-server:
+    build:
+      context: ./docker/iperf3
+      dockerfile: Dockerfile
+    image: netmon-iperf3:latest
+    container_name: netmon-iperf3
+    hostname: iperf3-server
+    networks:
+      - netmon
+    ports:
+      - "5201:5201/tcp"
+      - "5201:5201/udp"
+    restart: unless-stopped
+
+networks:
+  netmon:
+    name: netmon-net
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24
