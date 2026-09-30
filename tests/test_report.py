@@ -7,7 +7,6 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import pytest
-
 from scripts.models import Host, HostRole, HostStatistics, OutputFormat, ProbeResult
 from scripts.report import (
     build_session_payload,
@@ -78,6 +77,7 @@ def scenario() -> tuple[list[ProbeResult], list[HostStatistics]]:
 # session_id
 # ---------------------------------------------------------------------------
 
+
 def test_session_id_uses_given_moment() -> None:
     assert session_id(START) == "20260930-160000"
 
@@ -86,13 +86,12 @@ def test_session_id_uses_given_moment() -> None:
 # build_session_payload
 # ---------------------------------------------------------------------------
 
+
 def test_payload_shape(
     scenario: tuple[list[ProbeResult], list[HostStatistics]],
 ) -> None:
     results, statistics = scenario
-    payload = build_session_payload(
-        results, statistics, started_at=START, finished_at=END
-    )
+    payload = build_session_payload(results, statistics, started_at=START, finished_at=END)
 
     assert payload["session"]["total_probes"] == 4
     assert payload["session"]["hosts_monitored"] == 2
@@ -105,9 +104,7 @@ def test_payload_host_fields(
     scenario: tuple[list[ProbeResult], list[HostStatistics]],
 ) -> None:
     results, statistics = scenario
-    payload = build_session_payload(
-        results, statistics, started_at=START, finished_at=END
-    )
+    payload = build_session_payload(results, statistics, started_at=START, finished_at=END)
     by_name = {host["name"]: host for host in payload["hosts"]}
 
     alpha = by_name["alpha"]
@@ -127,13 +124,12 @@ def test_payload_host_fields(
 # render_json
 # ---------------------------------------------------------------------------
 
+
 def test_render_json_is_parseable(
     scenario: tuple[list[ProbeResult], list[HostStatistics]],
 ) -> None:
     results, statistics = scenario
-    payload = build_session_payload(
-        results, statistics, started_at=START, finished_at=END
-    )
+    payload = build_session_payload(results, statistics, started_at=START, finished_at=END)
     rendered = render_json(payload)
     parsed = json.loads(rendered)
     assert parsed["session"]["total_probes"] == 4
@@ -143,13 +139,12 @@ def test_render_json_is_parseable(
 # render_log
 # ---------------------------------------------------------------------------
 
+
 def test_render_log_contains_key_markers(
     scenario: tuple[list[ProbeResult], list[HostStatistics]],
 ) -> None:
     results, statistics = scenario
-    payload = build_session_payload(
-        results, statistics, started_at=START, finished_at=END
-    )
+    payload = build_session_payload(results, statistics, started_at=START, finished_at=END)
     log = render_log(payload)
 
     assert "monitoring session started" in log
@@ -165,13 +160,12 @@ def test_render_log_contains_key_markers(
 # render_markdown
 # ---------------------------------------------------------------------------
 
+
 def test_render_markdown_contains_table_and_incidents(
     scenario: tuple[list[ProbeResult], list[HostStatistics]],
 ) -> None:
     results, statistics = scenario
-    payload = build_session_payload(
-        results, statistics, started_at=START, finished_at=END
-    )
+    payload = build_session_payload(results, statistics, started_at=START, finished_at=END)
     md = render_markdown(payload)
 
     assert "# Monitoring Report" in md
@@ -189,9 +183,7 @@ def test_render_markdown_without_incidents() -> None:
     result = _probe(host=host, iteration=1, success=True, rtt_ms=0.1)
     stats.register(result)
 
-    payload = build_session_payload(
-        [result], [stats], started_at=START, finished_at=END
-    )
+    payload = build_session_payload([result], [stats], started_at=START, finished_at=END)
     md = render_markdown(payload)
 
     assert "No connectivity failures detected" in md
@@ -200,6 +192,7 @@ def test_render_markdown_without_incidents() -> None:
 # ---------------------------------------------------------------------------
 # write_reports
 # ---------------------------------------------------------------------------
+
 
 def test_write_reports_creates_all_requested_files(
     tmp_path: Path,

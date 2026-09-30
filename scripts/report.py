@@ -85,8 +85,7 @@ def render_log(payload: dict[str, Any]) -> str:
         )
 
     lines.append(
-        f"[{session['finished_at']}] session ended "
-        f"(duration={session['duration_seconds']}s)"
+        f"[{session['finished_at']}] session ended (duration={session['duration_seconds']}s)"
     )
     return "\n".join(lines) + "\n"
 
@@ -134,9 +133,7 @@ def render_markdown(payload: dict[str, Any]) -> str:
     if not incidents:
         lines.append("No connectivity failures detected during the session.")
     else:
-        lines.append(
-            "| Timestamp | Host | Address | Iteration | Reason |"
-        )
+        lines.append("| Timestamp | Host | Address | Iteration | Reason |")
         lines.append("|---|---|---|---|---|")
         for probe in incidents:
             lines.append(
@@ -192,6 +189,7 @@ def write_reports(
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
+
 
 def _host_summary(stats: HostStatistics) -> dict[str, Any]:
     return {
