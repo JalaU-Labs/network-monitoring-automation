@@ -6,7 +6,6 @@ from dataclasses import FrozenInstanceError
 from datetime import UTC, datetime
 
 import pytest
-
 from scripts.models import Host, HostRole, HostStatistics, ProbeResult
 
 
