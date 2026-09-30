@@ -53,13 +53,13 @@ La red virtual `netmon-net` (subred `172.28.0.0/24`) aloja cinco contenedores:
 
 **Roles:**
 
-| Contenedor | IP | Rol |
-|---|---|---|
-| `netmon-monitor` | `172.28.0.20` | Ejecuta el script de monitoreo (ICMP periódico). |
-| `netmon-target-alpha` | `172.28.0.10` | Host destino degradado (delay 50ms + 5% loss). |
-| `netmon-target-beta` | `172.28.0.11` | Host destino con latencia leve (10ms). |
-| `netmon-iperf3` | `172.28.0.2` | Servidor `iperf3` para las pruebas TCP/UDP de Actividad 1. |
-| Host Arch (admin) | — | Ejecuta `ping`, `traceroute`, `mtr`, `iperf3` cliente y Docker. |
+| Contenedor            | IP            | Rol                                                             |
+|-----------------------|---------------|-----------------------------------------------------------------|
+| `netmon-monitor`      | `172.28.0.20` | Ejecuta el script de monitoreo (ICMP periódico).                |
+| `netmon-target-alpha` | `172.28.0.10` | Host destino degradado (delay 50ms + 5% loss).                  |
+| `netmon-target-beta`  | `172.28.0.11` | Host destino con latencia leve (10ms).                          |
+| `netmon-iperf3`       | `172.28.0.2`  | Servidor `iperf3` para las pruebas TCP/UDP de Actividad 1.      |
+| Host Arch (admin)     | —             | Ejecuta `ping`, `traceroute`, `mtr`, `iperf3` cliente y Docker. |
 
 **Flujo de datos:**
 
@@ -130,7 +130,7 @@ network-monitoring-automation/
 
 ```bash
 # 1. Clonar el repositorio
-git clone <URL-del-repositorio>
+git clone git@gitlab.com:jala-university1/cohort-5/ES.CO.CSNT-245.GA.T2.26.M2/SD/week-05/alejandro-botina.git
 cd network-monitoring-automation
 
 # 2. Crear el entorno virtual e instalar dependencias
@@ -165,17 +165,17 @@ encuentra en [`docs/activity-1-monitoring.md`](docs/activity-1-monitoring.md).
 
 **Resumen de resultados:**
 
-| Prueba | Destino | Métrica clave | Valor |
-|---|---|---|---|
-| `ping` | `172.28.0.2` | RTT avg | 0.102 ms |
-| `ping` | `1.1.1.1` | RTT avg / mdev | 65.229 ms / 78.98 ms |
-| `traceroute` | `172.28.0.2` | Saltos | 1 |
-| `traceroute` | `1.1.1.1` | Saltos visibles | 1 (resto filtra ICMP) |
-| `iperf3` TCP | `172.28.0.2` | Throughput | 73.8 Gbps (0.00005% Retr) |
-| `iperf3` UDP (50 Mbps) | `172.28.0.2` | Pérdida / Jitter | 0% / 0.008 ms |
-| `iperf3` UDP (1 Gbps) | `172.28.0.2` | Pérdida | 0.42% |
-| `mtr` | `1.1.1.1` | Hops / Loss final | 5 / 0% |
-| `mtr` | `172.28.0.2` | Hops / Avg | 1 / 0.2 ms |
+| Prueba                 | Destino      | Métrica clave     | Valor                     |
+|------------------------|--------------|-------------------|---------------------------|
+| `ping`                 | `172.28.0.2` | RTT avg           | 0.102 ms                  |
+| `ping`                 | `1.1.1.1`    | RTT avg / mdev    | 65.229 ms / 78.98 ms      |
+| `traceroute`           | `172.28.0.2` | Saltos            | 1                         |
+| `traceroute`           | `1.1.1.1`    | Saltos visibles   | 1 (resto filtra ICMP)     |
+| `iperf3` TCP           | `172.28.0.2` | Throughput        | 73.8 Gbps (0.00005% Retr) |
+| `iperf3` UDP (50 Mbps) | `172.28.0.2` | Pérdida / Jitter  | 0% / 0.008 ms             |
+| `iperf3` UDP (1 Gbps)  | `172.28.0.2` | Pérdida           | 0.42%                     |
+| `mtr`                  | `1.1.1.1`    | Hops / Loss final | 5 / 0%                    |
+| `mtr`                  | `172.28.0.2` | Hops / Avg        | 1 / 0.2 ms                |
 
 Herramienta alternativa documentada: **`mtr`** (combina `ping` + `traceroute` con
 estadísticas acumuladas por salto).
@@ -186,14 +186,14 @@ estadísticas acumuladas por salto).
 
 ### 7.1. Diseño del sistema de monitoreo
 
-| Elemento | Definición |
-|---|---|
-| **Hosts monitoreados** | `target-alpha`, `target-beta`, `cloudflare-dns` |
+| Elemento                  | Definición                                                         |
+|---------------------------|--------------------------------------------------------------------|
+| **Hosts monitoreados**    | `target-alpha`, `target-beta`, `cloudflare-dns`                    |
 | **Métricas recolectadas** | Latencia (RTT ICMP), disponibilidad (éxito/fallo de sonda), jitter |
-| **Frecuencia** | `interval_seconds: 5` entre rondas |
-| **Iteraciones** | `iterations: 10` rondas por host |
-| **Timeout por sonda** | `timeout_seconds: 2` |
-| **Consolidación** | JSON + log cronológico + reporte Markdown en `reports/` |
+| **Frecuencia**            | `interval_seconds: 5` entre rondas                                 |
+| **Iteraciones**           | `iterations: 10` rondas por host                                   |
+| **Timeout por sonda**     | `timeout_seconds: 2`                                               |
+| **Consolidación**         | JSON + log cronológico + reporte Markdown en `reports/`            |
 
 La configuración vive en `scripts/config.yaml` y es validada por
 `scripts/config.py`. Cualquier valor fuera de rango produce un `ConfigError`
@@ -220,12 +220,12 @@ El script se divide en módulos con responsabilidades claras:
 
 **Códigos de salida:**
 
-| Código | Significado |
-|---|---|
-| `0` | Sesión completada correctamente |
-| `1` | Error de configuración |
-| `2` | Error inesperado durante la sesión |
-| `130` | Interrupción por SIGINT (Ctrl+C) |
+| Código | Significado                        |
+|--------|------------------------------------|
+| `0`    | Sesión completada correctamente    |
+| `1`    | Error de configuración             |
+| `2`    | Error inesperado durante la sesión |
+| `130`  | Interrupción por SIGINT (Ctrl+C)   |
 
 ### 7.3. Entorno Docker para el monitoreo
 
@@ -278,13 +278,13 @@ Session summary
 
 **Evidencias visuales:**
 
-![Topología Docker](../assets/evidence/activity-2/01-docker-topology.png)
+![Topología Docker](/assets/evidence/activity-2/01-docker-topology.png)
 
-![Reglas tc netem](../assets/evidence/activity-2/02-tc-netem.png)
+![Reglas tc netem](/assets/evidence/activity-2/02-tc-netem.png)
 
-![Sesión de monitoreo](../assets/evidence/activity-2/03-monitoring-session.png)
+![Sesión de monitoreo](/assets/evidence/activity-2/03-monitoring-session.png)
 
-![Reporte generado](../assets/evidence/activity-2/04-generated-report.png)
+![Reporte generado](/assets/evidence/activity-2/04-generated-report.png)
 
 ### 7.5. Análisis de resultados
 
@@ -353,14 +353,14 @@ par `Echo Request`/`Echo Reply`, y el RTT medido es el tiempo entre ambos.
 
 ### 8.2. ¿Qué métricas permiten detectar congestión o degradación del servicio?
 
-| Métrica | Qué mide | Cómo detecta degradación |
-|---|---|---|
-| **RTT promedio** | Latencia media por paquete | Un aumento sostenido respecto al baseline indica congestión o rutas más largas. |
-| **RTT min / max** | Rango de latencias | Un `max` muy superior al `min` indica encolamiento intermitente. |
-| **Jitter** | Variabilidad del RTT | Jitter alto (> 30 ms típicamente) degrada VoIP y streaming. |
-| **Pérdida de paquetes** | Porcentaje no entregados | Cualquier pérdida > 0% en una red sana es señal de congestión o fallo. |
-| **Disponibilidad** | % de sondas exitosas | Cae con interrupciones; útil para SLA. |
-| **Throughput** | Bits por segundo efectivos | Cae cuando la red no puede absorber la carga. |
+| Métrica                 | Qué mide                   | Cómo detecta degradación                                                        |
+|-------------------------|----------------------------|---------------------------------------------------------------------------------|
+| **RTT promedio**        | Latencia media por paquete | Un aumento sostenido respecto al baseline indica congestión o rutas más largas. |
+| **RTT min / max**       | Rango de latencias         | Un `max` muy superior al `min` indica encolamiento intermitente.                |
+| **Jitter**              | Variabilidad del RTT       | Jitter alto (> 30 ms típicamente) degrada VoIP y streaming.                     |
+| **Pérdida de paquetes** | Porcentaje no entregados   | Cualquier pérdida > 0% en una red sana es señal de congestión o fallo.          |
+| **Disponibilidad**      | % de sondas exitosas       | Cae con interrupciones; útil para SLA.                                          |
+| **Throughput**          | Bits por segundo efectivos | Cae cuando la red no puede absorber la carga.                                   |
 
 En el laboratorio, `target-alpha` mostró RTT 55.8 ms (vs 11.2 ms de beta),
 jitter 6.46 ms (vs 1.19 ms) y pérdida 10% (vs 0% de beta). La combinación de
@@ -467,7 +467,15 @@ TOTAL                        97%
 
 ---
 
-## 11. Autor
+## 11. Enlaces del proyecto
+
+- **Repositorio principal (GitLab):** https://gitlab.com/jala-university1/cohort-5/ES.CO.CSNT-245.GA.T2.26.M2/SD/week-05/alejandro-botina
+- **Espejo (GitHub):** https://github.com/JalaU-Labs/network-monitoring-automation
+- **Informe completo:** [`docs/lab-report.md`](docs/lab-report.md)
+
+---
+
+## 12. Autor
 
 **Diego Alejandro Botina**
 Estudiante de Ingeniería de Software - Jala University
@@ -475,6 +483,6 @@ Curso: CSNT-245 Redes de Computadoras 2
 
 ---
 
-## 12. Licencia
+## 13. Licencia
 
 MIT - ver [`LICENSE`](LICENSE).
