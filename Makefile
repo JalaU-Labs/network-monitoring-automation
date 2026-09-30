@@ -65,3 +65,22 @@ clean: ## Remove local caches and build artifacts
 	rm -rf htmlcov/ .coverage reports/*.json reports/*.log reports/*.md 2>/dev/null || true
 
 all: lint test ## Run lint and tests
+
+docker-ps: ## Show running containers with their IP addresses
+	$(COMPOSE) -f $(COMPOSE_FILE) ps
+
+docker-shell: ## Open an interactive shell in the monitor container
+	$(COMPOSE) -f $(COMPOSE_FILE) exec monitor bash
+
+docker-monitor: ## Run the monitoring script inside the monitor container
+	$(COMPOSE) -f $(COMPOSE_FILE) exec monitor \
+		uv run python -m scripts.network_monitor --config scripts/config.yaml
+
+docker-targets: ## Inspect tc netem rules on each target
+	@echo "--- target-alpha ---"
+	$(COMPOSE) -f $(COMPOSE_FILE) exec target-alpha tc qdisc show dev eth0
+	@echo "--- target-beta ---"
+	$(COMPOSE) -f $(COMPOSE_FILE) exec target-beta tc qdisc show dev eth0
+
+docker-clean-reports: ## Fix ownership of reports written by the container
+	sudo chown -R $$(id -u):$$(id -g) reports/
