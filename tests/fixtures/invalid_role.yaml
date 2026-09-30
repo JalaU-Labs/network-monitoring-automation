@@ -1,0 +1,12 @@
+monitoring:
+  interval_seconds: 1
+  iterations: 2
+  timeout_seconds: 1
+hosts:
+  - name: host-a
+    address: 127.0.0.1
+    role: bogus
+output:
+  reports_dir: reports
+  formats:
+    - json
