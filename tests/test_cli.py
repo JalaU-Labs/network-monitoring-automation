@@ -5,7 +5,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-
 from scripts import network_monitor
 from scripts.models import (
     Host,
@@ -51,6 +50,7 @@ def _fake_probe(success: bool = True):
 # ---------------------------------------------------------------------------
 # run_session
 # ---------------------------------------------------------------------------
+
 
 def test_run_session_collects_all_probes(
     mocker,
@@ -106,6 +106,7 @@ def test_run_session_uses_run_id_in_filenames(
 # ---------------------------------------------------------------------------
 # main
 # ---------------------------------------------------------------------------
+
 
 def test_main_returns_config_error_for_missing_file(tmp_path: Path) -> None:
     exit_code = network_monitor.main(["--config", str(tmp_path / "missing.yaml")])

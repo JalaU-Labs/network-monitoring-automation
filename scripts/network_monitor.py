@@ -38,6 +38,7 @@ DEFAULT_CONFIG_PATH = Path("scripts/config.yaml")
 # Session orchestration
 # ---------------------------------------------------------------------------
 
+
 def run_session(
     config: MonitoringConfig,
     *,
@@ -66,7 +67,9 @@ def run_session(
 
             status = "OK" if result.success else "FAIL"
             rtt = f"{result.rtt_ms:.3f} ms" if result.rtt_ms is not None else "n/a"
-            print(f"[iter {iteration:>3}/{config.iterations}] {host.name:<20} {status:<4} rtt={rtt}")
+            print(
+                f"[iter {iteration:>3}/{config.iterations}] {host.name:<20} {status:<4} rtt={rtt}"
+            )
 
         if iteration < config.iterations:
             sleeper(config.interval_seconds)
@@ -89,6 +92,7 @@ def run_session(
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
+
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
@@ -153,7 +157,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     except KeyboardInterrupt:
         print("\ninterrupted by user", file=sys.stderr)
         return EXIT_INTERRUPTED
-    except Exception as exc:  # noqa: BLE001 - top-level CLI boundary
+    except Exception as exc:
         print(f"unexpected error: {exc}", file=sys.stderr)
         return EXIT_RUNTIME_ERROR
 
