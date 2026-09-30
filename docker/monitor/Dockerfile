@@ -16,8 +16,10 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends iputils-ping \
     && rm -rf /var/lib/apt/lists/*
 
-# Install dependencies first for better layer caching.
-COPY pyproject.toml uv.lock ./
+# Metadata files are required by hatchling to validate the project during
+# the implicit sync that `uv run` performs at runtime. The source code is
+# mounted as a volume instead of being baked into the image.
+COPY pyproject.toml uv.lock README.md LICENSE ./
 RUN uv sync --frozen --no-install-project
 
 # Keep the container alive; commands are executed with `docker compose exec`.
